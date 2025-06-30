@@ -1,0 +1,1116 @@
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <title>
+   Customizable Music Player App
+  </title>
+  <script src="https://cdn.tailwindcss.com">
+  </script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&amp;display=swap" rel="stylesheet"/>
+  <style>
+   body {
+      font-family: "Poppins", sans-serif;
+    }
+    /* Scrollbar for song list */
+    #song-list::-webkit-scrollbar {
+      width: 8px;
+    }
+    #song-list::-webkit-scrollbar-thumb {
+      background-color: #7c3aed;
+      border-radius: 4px;
+    }
+  </style>
+ </head>
+ <body class="bg-gray-900 text-gray-100 flex flex-col min-h-screen">
+  <!-- Header -->
+  <header class="flex items-center justify-between px-5 py-4 bg-gray-800 shadow-md sticky top-0 z-50">
+   <div class="flex items-center space-x-3">
+    <img alt="App logo, stylized letter M in purple and white" class="w-10 h-10 rounded-full" height="40" id="app-logo" src="https://storage.googleapis.com/a1aa/image/4d86f2d0-1390-4cfd-afa2-61cb088eb464.jpg" width="40"/>
+    <h1 aria-label="Application name, editable" class="text-2xl font-semibold text-purple-500 select-none" contenteditable="true" id="app-name" spellcheck="false">
+     MyMusic
+    </h1>
+   </div>
+   <nav aria-label="Primary navigation" class="hidden md:flex space-x-6 text-gray-300 font-medium">
+    <button aria-pressed="true" class="hover:text-purple-500 transition focus:outline-none" id="btn-browse">
+     Browse
+    </button>
+    <button aria-pressed="false" class="hover:text-purple-500 transition focus:outline-none" id="btn-library">
+     Library
+    </button>
+    <button aria-pressed="false" class="hover:text-purple-500 transition focus:outline-none" id="btn-settings">
+     Settings
+    </button>
+   </nav>
+   <button aria-label="Open menu" class="md:hidden text-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500" id="mobile-menu-button">
+    <i class="fas fa-bars fa-lg">
+    </i>
+   </button>
+  </header>
+  <!-- Mobile Menu -->
+  <nav aria-label="Mobile navigation" class="md:hidden bg-gray-800 text-gray-300 space-y-3 px-5 py-4 hidden" id="mobile-menu">
+   <button aria-pressed="true" class="block w-full text-left hover:text-purple-500 transition focus:outline-none" id="m-btn-browse">
+    Browse
+   </button>
+   <button aria-pressed="false" class="block w-full text-left hover:text-purple-500 transition focus:outline-none" id="m-btn-library">
+    Library
+   </button>
+   <button aria-pressed="false" class="block w-full text-left hover:text-purple-500 transition focus:outline-none" id="m-btn-settings">
+    Settings
+   </button>
+  </nav>
+  <main class="flex-grow flex flex-col md:flex-row overflow-hidden">
+   <!-- Sidebar for Library -->
+   <aside aria-label="Library sidebar" class="hidden md:flex flex-col w-64 bg-gray-800 p-5 space-y-6 overflow-y-auto" id="sidebar-library">
+    <h2 class="text-xl font-semibold text-white mb-4">
+     Your Songs
+    </h2>
+    <ul aria-label="List of songs" class="flex flex-col space-y-3 overflow-y-auto max-h-[calc(100vh-10rem)] pr-2" id="song-list" tabindex="0">
+     <!-- Songs will be dynamically inserted here -->
+    </ul>
+    <button aria-label="Add new song" class="mt-4 bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg font-semibold transition focus:outline-none focus:ring-2 focus:ring-purple-500" id="btn-add-song">
+     <i class="fas fa-plus mr-2">
+     </i>
+     Add Song
+    </button>
+   </aside>
+   <!-- Main Content Area -->
+   <section aria-live="polite" class="flex-grow flex flex-col bg-gray-900 p-5 overflow-y-auto" id="main-content">
+    <!-- Browse Section -->
+    <section class="flex flex-col space-y-6" id="section-browse">
+     <h2 class="text-3xl font-bold text-purple-500 mb-4 select-none">
+      Browse Music
+     </h2>
+     <div aria-label="Music categories" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-5" id="browse-categories" role="list">
+      <button aria-label="Pop music category" class="relative rounded-lg overflow-hidden cursor-pointer group focus:outline-none focus:ring-2 focus:ring-purple-500" data-category="Pop">
+       <img alt="Pop music category cover with colorful microphone and music notes on vibrant background" class="w-full h-48 object-cover rounded-lg group-hover:scale-105 transition-transform" height="300" loading="lazy" src="https://storage.googleapis.com/a1aa/image/36f6cd41-311d-4f9b-59b7-2d36275c98b1.jpg" width="300"/>
+       <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-lg">
+        <h4 class="text-white text-lg font-semibold">
+         Pop
+        </h4>
+       </div>
+      </button>
+      <button aria-label="Rock music category" class="relative rounded-lg overflow-hidden cursor-pointer group focus:outline-none focus:ring-2 focus:ring-purple-500" data-category="Rock">
+       <img alt="Rock music category cover with electric guitar and fire flames on dark background" class="w-full h-48 object-cover rounded-lg group-hover:scale-105 transition-transform" height="300" loading="lazy" src="https://storage.googleapis.com/a1aa/image/c0d92b5f-c4a1-4ced-1aff-7f934899a35e.jpg" width="300"/>
+       <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-lg">
+        <h4 class="text-white text-lg font-semibold">
+         Rock
+        </h4>
+       </div>
+      </button>
+      <button aria-label="Hip-Hop music category" class="relative rounded-lg overflow-hidden cursor-pointer group focus:outline-none focus:ring-2 focus:ring-purple-500" data-category="Hip-Hop">
+       <img alt="Hip-Hop music category cover with graffiti art and headphones on urban background" class="w-full h-48 object-cover rounded-lg group-hover:scale-105 transition-transform" height="300" loading="lazy" src="https://storage.googleapis.com/a1aa/image/8e7392ac-8833-4fec-7a1e-eff663f9bde1.jpg" width="300"/>
+       <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-lg">
+        <h4 class="text-white text-lg font-semibold">
+         Hip-Hop
+        </h4>
+       </div>
+      </button>
+      <button aria-label="Jazz music category" class="relative rounded-lg overflow-hidden cursor-pointer group focus:outline-none focus:ring-2 focus:ring-purple-500" data-category="Jazz">
+       <img alt="Jazz music category cover with saxophone and musical notes on warm brown background" class="w-full h-48 object-cover rounded-lg group-hover:scale-105 transition-transform" height="300" loading="lazy" src="https://storage.googleapis.com/a1aa/image/1d81fad2-d317-42de-52a2-71f45db24bb1.jpg" width="300"/>
+       <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-lg">
+        <h4 class="text-white text-lg font-semibold">
+         Jazz
+        </h4>
+       </div>
+      </button>
+      <button aria-label="Classical music category" class="relative rounded-lg overflow-hidden cursor-pointer group focus:outline-none focus:ring-2 focus:ring-purple-500" data-category="Classical">
+       <img alt="Classical music category cover with violin and sheet music on elegant beige background" class="w-full h-48 object-cover rounded-lg group-hover:scale-105 transition-transform" height="300" loading="lazy" src="https://storage.googleapis.com/a1aa/image/298a7545-7ee5-456c-53de-aad84dc680a1.jpg" width="300"/>
+       <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-lg">
+        <h4 class="text-white text-lg font-semibold">
+         Classical
+        </h4>
+       </div>
+      </button>
+      <button aria-label="Electronic music category" class="relative rounded-lg overflow-hidden cursor-pointer group focus:outline-none focus:ring-2 focus:ring-purple-500" data-category="Electronic">
+       <img alt="Electronic music category cover with DJ turntable and neon lights on dark background" class="w-full h-48 object-cover rounded-lg group-hover:scale-105 transition-transform" height="300" loading="lazy" src="https://storage.googleapis.com/a1aa/image/2ce53857-2c1d-4bfe-be7a-e285aa3cc241.jpg" width="300"/>
+       <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-lg">
+        <h4 class="text-white text-lg font-semibold">
+         Electronic
+        </h4>
+       </div>
+      </button>
+      <button aria-label="Reggae music category" class="relative rounded-lg overflow-hidden cursor-pointer group focus:outline-none focus:ring-2 focus:ring-purple-500" data-category="Reggae">
+       <img alt="Reggae music category cover with rasta colors and guitar on tropical background" class="w-full h-48 object-cover rounded-lg group-hover:scale-105 transition-transform" height="300" loading="lazy" src="https://storage.googleapis.com/a1aa/image/af18546c-2f3f-450c-43df-158061bc29fa.jpg" width="300"/>
+       <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-lg">
+        <h4 class="text-white text-lg font-semibold">
+         Reggae
+        </h4>
+       </div>
+      </button>
+     </div>
+    </section>
+    <!-- Library Section -->
+    <section class="hidden flex flex-col space-y-6" id="section-library">
+     <h2 class="text-3xl font-bold text-purple-500 mb-4 select-none">
+      Your Library
+     </h2>
+     <div aria-label="Your saved songs" class="flex flex-col space-y-4 overflow-y-auto max-h-[calc(100vh-10rem)]" id="library-songs" tabindex="0">
+      <!-- Songs will be dynamically inserted here -->
+     </div>
+    </section>
+    <!-- Settings Section -->
+    <section class="hidden flex flex-col space-y-6 max-w-xl" id="section-settings">
+     <h2 class="text-3xl font-bold text-purple-500 mb-4 select-none">
+      Settings
+     </h2>
+     <form aria-label="Settings form" class="space-y-6" id="settings-form">
+      <div>
+       <label class="block mb-1 font-semibold text-gray-300" for="input-app-name">
+        App Name
+       </label>
+       <input aria-describedby="app-name-desc" class="w-full rounded-md p-2 bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-purple-500" id="input-app-name" placeholder="Enter app name" type="text"/>
+       <p class="text-xs text-gray-400 mt-1" id="app-name-desc">
+        Change the name displayed in the header.
+       </p>
+      </div>
+      <div>
+       <label class="block mb-1 font-semibold text-gray-300" for="input-app-logo">
+        App Logo URL
+       </label>
+       <input aria-describedby="app-logo-desc" class="w-full rounded-md p-2 bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-purple-500" id="input-app-logo" placeholder="Enter image URL for logo" type="url"/>
+       <p class="text-xs text-gray-400 mt-1" id="app-logo-desc">
+        Change the logo image by providing a direct image URL.
+       </p>
+      </div>
+      <div>
+       <label class="block mb-1 font-semibold text-gray-300" for="input-primary-color">
+        Primary Color
+       </label>
+       <input aria-describedby="primary-color-desc" class="w-16 h-10 rounded-md p-0 border-0 cursor-pointer" id="input-primary-color" type="color" value="#7c3aed"/>
+       <p class="text-xs text-gray-400 mt-1" id="primary-color-desc">
+        Change the primary accent color of the app.
+       </p>
+      </div>
+      <button class="bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-lg font-semibold transition focus:outline-none focus:ring-2 focus:ring-purple-500" type="submit">
+       Save Settings
+      </button>
+     </form>
+    </section>
+   </section>
+  </main>
+  <!-- Player Controls -->
+  <footer aria-label="Music player controls" class="bg-gray-800 border-t border-gray-700 p-4 flex flex-col md:flex-row items-center justify-between sticky bottom-0 z-50">
+   <div class="flex items-center space-x-4 w-full md:w-1/3 min-w-0">
+    <img alt="Current song cover" class="w-16 h-16 rounded-lg object-cover flex-shrink-0" height="60" id="player-cover" src="https://storage.googleapis.com/a1aa/image/a6ca9560-afc9-40e0-0aa0-29df510ac119.jpg" width="60"/>
+    <div class="flex flex-col overflow-hidden min-w-0">
+     <span aria-live="polite" class="font-semibold truncate select-text" id="player-title">
+      No song selected
+     </span>
+     <span aria-live="polite" class="text-gray-400 text-sm truncate select-text" id="player-artist">
+      -
+     </span>
+    </div>
+    <button aria-label="Add to favorites" class="text-gray-400 hover:text-purple-500 focus:outline-none" id="btn-favorite" title="Add to favorites">
+     <i class="far fa-heart">
+     </i>
+    </button>
+   </div>
+   <div aria-label="Playback controls" class="flex flex-col items-center space-y-2 w-full md:w-1/3 mt-4 md:mt-0">
+    <div class="flex items-center space-x-6">
+     <button aria-label="Previous track" class="text-gray-400 hover:text-purple-500 focus:outline-none" id="btn-prev">
+      <i class="fas fa-step-backward fa-lg">
+      </i>
+     </button>
+     <button aria-label="Play or pause" class="text-purple-500 hover:text-purple-600 focus:outline-none text-3xl" id="btn-play-pause">
+      <i class="fas fa-play-circle">
+      </i>
+     </button>
+     <button aria-label="Next track" class="text-gray-400 hover:text-purple-500 focus:outline-none" id="btn-next">
+      <i class="fas fa-step-forward fa-lg">
+      </i>
+     </button>
+    </div>
+    <div class="flex items-center space-x-2 w-full max-w-md">
+     <span class="text-xs text-gray-400 select-none" id="current-time">
+      0:00
+     </span>
+     <input aria-label="Song progress slider" class="w-full h-1 rounded-lg bg-purple-600 accent-purple-500 cursor-pointer" id="progress-bar" max="100" min="0" type="range" value="0"/>
+     <span class="text-xs text-gray-400 select-none" id="duration">
+      0:00
+     </span>
+    </div>
+   </div>
+   <div aria-label="Additional controls" class="flex items-center space-x-4 w-full md:w-1/3 justify-end mt-4 md:mt-0">
+    <button aria-label="Shuffle" class="text-gray-400 hover:text-purple-500 focus:outline-none" id="btn-shuffle" title="Shuffle">
+     <i class="fas fa-random fa-lg">
+     </i>
+    </button>
+    <button aria-label="Repeat" class="text-gray-400 hover:text-purple-500 focus:outline-none" id="btn-repeat" title="Repeat">
+     <i class="fas fa-redo fa-lg">
+     </i>
+    </button>
+    <button aria-label="Volume" class="text-gray-400 hover:text-purple-500 focus:outline-none" id="btn-volume-icon" title="Volume">
+     <i class="fas fa-volume-up fa-lg">
+     </i>
+    </button>
+    <input aria-label="Volume slider" class="w-24 h-1 rounded-lg bg-purple-600 accent-purple-500 cursor-pointer" id="volume-slider" max="1" min="0" step="0.01" type="range" value="0.7"/>
+   </div>
+  </footer>
+  <audio id="audio-player" preload="metadata">
+  </audio>
+  <!-- Modals -->
+  <div aria-labelledby="modal-title" aria-modal="true" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 hidden" id="modal-overlay" role="dialog">
+   <div class="bg-gray-800 rounded-lg max-w-md w-full p-6 space-y-4 relative" id="modal">
+    <h3 class="text-xl font-semibold text-purple-500 select-none" id="modal-title">
+     Add New Song
+    </h3>
+    <form class="space-y-4" id="form-add-song" novalidate="">
+     <div>
+      <label class="block mb-1 font-semibold text-gray-300" for="input-song-title">
+       Song Title
+      </label>
+      <input aria-required="true" class="w-full rounded-md p-2 bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-purple-500" id="input-song-title" required="" type="text"/>
+     </div>
+     <div>
+      <label class="block mb-1 font-semibold text-gray-300" for="input-song-artist">
+       Artist
+      </label>
+      <input aria-required="true" class="w-full rounded-md p-2 bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-purple-500" id="input-song-artist" required="" type="text"/>
+     </div>
+     <div>
+      <label class="block mb-1 font-semibold text-gray-300" for="input-song-url">
+       Audio URL
+      </label>
+      <input aria-required="true" class="w-full rounded-md p-2 bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-purple-500" id="input-song-url" placeholder="https://example.com/song.mp3" required="" type="url"/>
+     </div>
+     <div>
+      <label class="block mb-1 font-semibold text-gray-300" for="input-song-cover">
+       Cover Image URL
+      </label>
+      <input aria-required="true" class="w-full rounded-md p-2 bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-purple-500" id="input-song-cover" placeholder="https://example.com/cover.jpg" required="" type="url"/>
+     </div>
+     <div class="flex justify-end space-x-3">
+      <button class="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-lg font-semibold transition focus:outline-none focus:ring-2 focus:ring-purple-500" id="btn-cancel-add-song" type="button">
+       Cancel
+      </button>
+      <button class="bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-lg font-semibold transition focus:outline-none focus:ring-2 focus:ring-purple-500" type="submit">
+       Add Song
+      </button>
+     </div>
+    </form>
+   </div>
+  </div>
+  <script>
+   (() => {
+      // Elements
+      const mobileMenuButton = document.getElementById("mobile-menu-button");
+      const mobileMenu = document.getElementById("mobile-menu");
+
+      const btnBrowse = document.getElementById("btn-browse");
+      const btnLibrary = document.getElementById("btn-library");
+      const btnSettings = document.getElementById("btn-settings");
+
+      const mBtnBrowse = document.getElementById("m-btn-browse");
+      const mBtnLibrary = document.getElementById("m-btn-library");
+      const mBtnSettings = document.getElementById("m-btn-settings");
+
+      const sectionBrowse = document.getElementById("section-browse");
+      const sectionLibrary = document.getElementById("section-library");
+      const sectionSettings = document.getElementById("section-settings");
+
+      const sidebarLibrary = document.getElementById("sidebar-library");
+      const songList = document.getElementById("song-list");
+      const librarySongs = document.getElementById("library-songs");
+      const btnAddSong = document.getElementById("btn-add-song");
+
+      const modalOverlay = document.getElementById("modal-overlay");
+      const formAddSong = document.getElementById("form-add-song");
+      const btnCancelAddSong = document.getElementById("btn-cancel-add-song");
+
+      const audioPlayer = document.getElementById("audio-player");
+      const playerCover = document.getElementById("player-cover");
+      const playerTitle = document.getElementById("player-title");
+      const playerArtist = document.getElementById("player-artist");
+      const btnFavorite = document.getElementById("btn-favorite");
+
+      const btnPrev = document.getElementById("btn-prev");
+      const btnPlayPause = document.getElementById("btn-play-pause");
+      const btnNext = document.getElementById("btn-next");
+
+      const progressBar = document.getElementById("progress-bar");
+      const currentTimeEl = document.getElementById("current-time");
+      const durationEl = document.getElementById("duration");
+
+      const btnShuffle = document.getElementById("btn-shuffle");
+      const btnRepeat = document.getElementById("btn-repeat");
+
+      const btnVolumeIcon = document.getElementById("btn-volume-icon");
+      const volumeSlider = document.getElementById("volume-slider");
+
+      const appNameEl = document.getElementById("app-name");
+      const appLogoEl = document.getElementById("app-logo");
+
+      const inputAppName = document.getElementById("input-app-name");
+      const inputAppLogo = document.getElementById("input-app-logo");
+      const inputPrimaryColor = document.getElementById("input-primary-color");
+      const settingsForm = document.getElementById("settings-form");
+
+      // State
+      let songs = [];
+      let currentIndex = -1;
+      let isPlaying = false;
+      let isShuffle = false;
+      let isRepeat = false;
+      let favorites = new Set();
+
+      // Load from localStorage or initialize
+      function loadState() {
+        const savedSongs = localStorage.getItem("songs");
+        if (savedSongs) {
+          try {
+            songs = JSON.parse(savedSongs);
+          } catch {
+            songs = [];
+          }
+        } else {
+          // Default songs
+          songs = [
+            {
+              id: crypto.randomUUID(),
+              title: "Lost in the Moment",
+              artist: "Echoes Band",
+              audioUrl:
+                "https://cdn.pixabay.com/download/audio/2022/03/23/audio_0a3a7a3a3a.mp3?filename=ambient-cinematic-11207.mp3",
+              coverUrl:
+                "https://placehold.co/300x300/png?text=Lost+in+the+Moment&bg=7c3aed&fg=fff",
+            },
+            {
+              id: crypto.randomUUID(),
+              title: "Dreams & Reality",
+              artist: "Luna Waves",
+              audioUrl:
+                "https://cdn.pixabay.com/download/audio/2022/03/23/audio_0a3a7a3a3a.mp3?filename=ambient-cinematic-11207.mp3",
+              coverUrl:
+                "https://placehold.co/300x300/png?text=Dreams+%26+Reality&bg=9333ea&fg=fff",
+            },
+            {
+              id: crypto.randomUUID(),
+              title: "Firestorm",
+              artist: "The Rockers",
+              audioUrl:
+                "https://cdn.pixabay.com/download/audio/2021/10/22/audio_1a2b3c4d5e.mp3?filename=rock-guitar-11207.mp3",
+              coverUrl:
+                "https://placehold.co/300x300/png?text=Firestorm&bg=9d174d&fg=fff",
+            },
+          ];
+          saveSongs();
+        }
+
+        const savedFavorites = localStorage.getItem("favorites");
+        if (savedFavorites) {
+          try {
+            favorites = new Set(JSON.parse(savedFavorites));
+          } catch {
+            favorites = new Set();
+          }
+        }
+
+        const savedAppName = localStorage.getItem("appName");
+        if (savedAppName) {
+          appNameEl.textContent = savedAppName;
+          inputAppName.value = savedAppName;
+        } else {
+          inputAppName.value = appNameEl.textContent;
+        }
+
+        const savedAppLogo = localStorage.getItem("appLogo");
+        if (savedAppLogo) {
+          appLogoEl.src = savedAppLogo;
+          inputAppLogo.value = savedAppLogo;
+        } else {
+          inputAppLogo.value = "";
+        }
+
+        const savedPrimaryColor = localStorage.getItem("primaryColor");
+        if (savedPrimaryColor) {
+          inputPrimaryColor.value = savedPrimaryColor;
+          updatePrimaryColor(savedPrimaryColor);
+        } else {
+          inputPrimaryColor.value = "#7c3aed";
+          updatePrimaryColor("#7c3aed");
+        }
+      }
+
+      // Save songs to localStorage
+      function saveSongs() {
+        localStorage.setItem("songs", JSON.stringify(songs));
+      }
+
+      // Save favorites to localStorage
+      function saveFavorites() {
+        localStorage.setItem("favorites", JSON.stringify([...favorites]));
+      }
+
+      // Save app name
+      function saveAppName(name) {
+        localStorage.setItem("appName", name);
+      }
+
+      // Save app logo
+      function saveAppLogo(url) {
+        localStorage.setItem("appLogo", url);
+      }
+
+      // Save primary color
+      function savePrimaryColor(color) {
+        localStorage.setItem("primaryColor", color);
+      }
+
+      // Update primary color CSS variables
+      function updatePrimaryColor(color) {
+        document.documentElement.style.setProperty("--tw-ring-color", color);
+        document.documentElement.style.setProperty("--tw-bg-opacity", "1");
+        document.documentElement.style.setProperty(
+          "--tw-bg-color",
+          color + "ff"
+        );
+        // Tailwind purple-600 is #7c3aed, so override CSS variables for accent color
+        // We'll override accent-purple-500 and accent-purple-600 colors dynamically
+        const style = document.documentElement.style;
+        style.setProperty("--tw-accent-color", color);
+        // For simplicity, override accent-purple-500 and accent-purple-600 classes by adding a style tag
+        let styleTag = document.getElementById("dynamic-accent-color");
+        if (!styleTag) {
+          styleTag = document.createElement("style");
+          styleTag.id = "dynamic-accent-color";
+          document.head.appendChild(styleTag);
+        }
+        styleTag.textContent = `
+          .accent-purple-500 {
+            accent-color: ${color} !important;
+          }
+          .bg-purple-600 {
+            background-color: ${color} !important;
+          }
+          .hover\\:bg-purple-700:hover {
+            background-color: ${shadeColor(color, -15)} !important;
+          }
+          .text-purple-500 {
+            color: ${color} !important;
+          }
+          .hover\\:text-purple-500:hover {
+            color: ${color} !important;
+          }
+          .focus\\:ring-purple-500:focus {
+            --tw-ring-color: ${color} !important;
+          }
+        `;
+      }
+
+      // Utility to shade color (darken/lighten)
+      function shadeColor(color, percent) {
+        let f = color.slice(1),
+          t = percent < 0 ? 0 : 255,
+          p = percent < 0 ? percent * -1 : percent,
+          R = parseInt(f.substring(0, 2), 16),
+          G = parseInt(f.substring(2, 4), 16),
+          B = parseInt(f.substring(4, 6), 16);
+        return (
+          "#" +
+          (
+            0x1000000 +
+            (Math.round((t - R) * p) + R) * 0x10000 +
+            (Math.round((t - G) * p) + G) * 0x100 +
+            (Math.round((t - B) * p) + B)
+          )
+            .toString(16)
+            .slice(1)
+        );
+      }
+
+      // Render song list in sidebar
+      function renderSongList() {
+        songList.innerHTML = "";
+        songs.forEach((song, index) => {
+          const li = document.createElement("li");
+          li.className =
+            "flex items-center space-x-3 cursor-pointer rounded-lg p-2 hover:bg-purple-700 transition focus:outline-none focus:ring-2 focus:ring-purple-500";
+          li.tabIndex = 0;
+          li.setAttribute("role", "button");
+          li.setAttribute("aria-label", `Play song ${song.title} by ${song.artist}`);
+          li.dataset.index = index;
+
+          const img = document.createElement("img");
+          img.src = song.coverUrl;
+          img.alt = `Cover image for ${song.title} by ${song.artist}`;
+          img.className = "w-12 h-12 rounded-lg object-cover flex-shrink-0";
+          img.width = 48;
+          img.height = 48;
+
+          const div = document.createElement("div");
+          div.className = "flex flex-col min-w-0";
+
+          const title = document.createElement("span");
+          title.className = "font-semibold truncate";
+          title.textContent = song.title;
+
+          const artist = document.createElement("span");
+          artist.className = "text-gray-400 text-sm truncate";
+          artist.textContent = song.artist;
+
+          div.appendChild(title);
+          div.appendChild(artist);
+
+          const btnDelete = document.createElement("button");
+          btnDelete.className =
+            "text-gray-400 hover:text-red-500 focus:outline-none ml-auto";
+          btnDelete.title = `Delete song ${song.title}`;
+          btnDelete.setAttribute("aria-label", `Delete song ${song.title}`);
+          btnDelete.innerHTML = '<i class="fas fa-trash-alt"></i>';
+          btnDelete.addEventListener("click", (e) => {
+            e.stopPropagation();
+            if (
+              confirm(
+                `Are you sure you want to delete the song "${song.title}" by ${song.artist}?`
+              )
+            ) {
+              deleteSong(index);
+            }
+          });
+
+          li.appendChild(img);
+          li.appendChild(div);
+          li.appendChild(btnDelete);
+
+          li.addEventListener("click", () => {
+            playSong(index);
+          });
+          li.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              playSong(index);
+            }
+          });
+
+          songList.appendChild(li);
+        });
+      }
+
+      // Render library songs in main content
+      function renderLibrarySongs() {
+        librarySongs.innerHTML = "";
+        if (songs.length === 0) {
+          const p = document.createElement("p");
+          p.className = "text-gray-400 italic";
+          p.textContent = "No songs in your library. Add some!";
+          librarySongs.appendChild(p);
+          return;
+        }
+        songs.forEach((song, index) => {
+          const div = document.createElement("div");
+          div.className =
+            "flex items-center space-x-4 bg-gray-800 rounded-lg p-3 cursor-pointer hover:bg-purple-700 transition focus:outline-none focus:ring-2 focus:ring-purple-500";
+          div.tabIndex = 0;
+          div.setAttribute("role", "button");
+          div.setAttribute("aria-label", `Play song ${song.title} by ${song.artist}`);
+          div.dataset.index = index;
+
+          const img = document.createElement("img");
+          img.src = song.coverUrl;
+          img.alt = `Cover image for ${song.title} by ${song.artist}`;
+          img.className = "w-16 h-16 rounded-lg object-cover flex-shrink-0";
+          img.width = 64;
+          img.height = 64;
+
+          const divText = document.createElement("div");
+          divText.className = "flex flex-col min-w-0";
+
+          const title = document.createElement("span");
+          title.className = "font-semibold truncate";
+          title.textContent = song.title;
+
+          const artist = document.createElement("span");
+          artist.className = "text-gray-400 text-sm truncate";
+          artist.textContent = song.artist;
+
+          divText.appendChild(title);
+          divText.appendChild(artist);
+
+          const btnDelete = document.createElement("button");
+          btnDelete.className =
+            "text-gray-400 hover:text-red-500 focus:outline-none ml-auto";
+          btnDelete.title = `Delete song ${song.title}`;
+          btnDelete.setAttribute("aria-label", `Delete song ${song.title}`);
+          btnDelete.innerHTML = '<i class="fas fa-trash-alt"></i>';
+          btnDelete.addEventListener("click", (e) => {
+            e.stopPropagation();
+            if (
+              confirm(
+                `Are you sure you want to delete the song "${song.title}" by ${song.artist}?`
+              )
+            ) {
+              deleteSong(index);
+            }
+          });
+
+          div.appendChild(img);
+          div.appendChild(divText);
+          div.appendChild(btnDelete);
+
+          div.addEventListener("click", () => {
+            playSong(index);
+          });
+          div.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              playSong(index);
+            }
+          });
+
+          librarySongs.appendChild(div);
+        });
+      }
+
+      // Delete song by index
+      function deleteSong(index) {
+        if (index === currentIndex) {
+          stopPlayback();
+        }
+        songs.splice(index, 1);
+        if (currentIndex > index) {
+          currentIndex--;
+        } else if (currentIndex === index) {
+          currentIndex = -1;
+        }
+        saveSongs();
+        renderSongList();
+        renderLibrarySongs();
+        updatePlayerUI();
+      }
+
+      // Play song by index
+      function playSong(index) {
+        if (index < 0 || index >= songs.length) return;
+        currentIndex = index;
+        const song = songs[index];
+        audioPlayer.src = song.audioUrl;
+        audioPlayer.play().catch(() => {});
+        isPlaying = true;
+        updatePlayerUI();
+        updatePlayPauseButton();
+        highlightCurrentSong();
+      }
+
+      // Highlight current song in lists
+      function highlightCurrentSong() {
+        const allItems = [...songList.children];
+        allItems.forEach((li, idx) => {
+          if (idx === currentIndex) {
+            li.classList.add("bg-purple-700");
+            li.setAttribute("aria-current", "true");
+          } else {
+            li.classList.remove("bg-purple-700");
+            li.removeAttribute("aria-current");
+          }
+        });
+        const allLibItems = [...librarySongs.children];
+        allLibItems.forEach((div, idx) => {
+          if (idx === currentIndex) {
+            div.classList.add("bg-purple-700");
+            div.setAttribute("aria-current", "true");
+          } else {
+            div.classList.remove("bg-purple-700");
+            div.removeAttribute("aria-current");
+          }
+        });
+      }
+
+      // Update player UI with current song info
+      function updatePlayerUI() {
+        if (currentIndex === -1 || !songs[currentIndex]) {
+          playerCover.src = "https://placehold.co/60x60/png?text=Cover";
+          playerCover.alt = "No song selected";
+          playerTitle.textContent = "No song selected";
+          playerArtist.textContent = "-";
+          progressBar.value = 0;
+          currentTimeEl.textContent = "0:00";
+          durationEl.textContent = "0:00";
+          btnFavorite.querySelector("i").className = "far fa-heart";
+          return;
+        }
+        const song = songs[currentIndex];
+        playerCover.src = song.coverUrl;
+        playerCover.alt = `Cover image for ${song.title} by ${song.artist}`;
+        playerTitle.textContent = song.title;
+        playerArtist.textContent = song.artist;
+        btnFavorite.querySelector("i").className = favorites.has(song.id)
+          ? "fas fa-heart text-purple-500"
+          : "far fa-heart";
+      }
+
+      // Update play/pause button icon
+      function updatePlayPauseButton() {
+        const icon = btnPlayPause.querySelector("i");
+        if (isPlaying) {
+          icon.classList.remove("fa-play-circle");
+          icon.classList.add("fa-pause-circle");
+        } else {
+          icon.classList.remove("fa-pause-circle");
+          icon.classList.add("fa-play-circle");
+        }
+      }
+
+      // Stop playback
+      function stopPlayback() {
+        audioPlayer.pause();
+        audioPlayer.currentTime = 0;
+        isPlaying = false;
+        updatePlayPauseButton();
+      }
+
+      // Play next song
+      function playNext() {
+        if (songs.length === 0) return;
+        if (isShuffle) {
+          let nextIndex;
+          do {
+            nextIndex = Math.floor(Math.random() * songs.length);
+          } while (nextIndex === currentIndex && songs.length > 1);
+          playSong(nextIndex);
+        } else {
+          let nextIndex = currentIndex + 1;
+          if (nextIndex >= songs.length) {
+            if (isRepeat) {
+              nextIndex = 0;
+            } else {
+              stopPlayback();
+              return;
+            }
+          }
+          playSong(nextIndex);
+        }
+      }
+
+      // Play previous song
+      function playPrev() {
+        if (songs.length === 0) return;
+        if (isShuffle) {
+          let prevIndex;
+          do {
+            prevIndex = Math.floor(Math.random() * songs.length);
+          } while (prevIndex === currentIndex && songs.length > 1);
+          playSong(prevIndex);
+        } else {
+          let prevIndex = currentIndex - 1;
+          if (prevIndex < 0) {
+            if (isRepeat) {
+              prevIndex = songs.length - 1;
+            } else {
+              stopPlayback();
+              return;
+            }
+          }
+          playSong(prevIndex);
+        }
+      }
+
+      // Format time in seconds to mm:ss
+      function formatTime(seconds) {
+        const m = Math.floor(seconds / 60);
+        const s = Math.floor(seconds % 60);
+        return `${m}:${s.toString().padStart(2, "0")}`;
+      }
+
+      // Update progress bar and time display
+      function updateProgress() {
+        if (!audioPlayer.duration) return;
+        const current = audioPlayer.currentTime;
+        const duration = audioPlayer.duration;
+        progressBar.max = duration;
+        progressBar.value = current;
+        currentTimeEl.textContent = formatTime(current);
+        durationEl.textContent = formatTime(duration);
+      }
+
+      // Seek audio to progress bar value
+      function seekAudio() {
+        audioPlayer.currentTime = progressBar.value;
+      }
+
+      // Toggle play/pause
+      function togglePlayPause() {
+        if (isPlaying) {
+          audioPlayer.pause();
+          isPlaying = false;
+        } else {
+          if (currentIndex === -1 && songs.length > 0) {
+            playSong(0);
+          } else {
+            audioPlayer.play().catch(() => {});
+            isPlaying = true;
+          }
+        }
+        updatePlayPauseButton();
+      }
+
+      // Toggle favorite for current song
+      function toggleFavorite() {
+        if (currentIndex === -1) return;
+        const song = songs[currentIndex];
+        if (favorites.has(song.id)) {
+          favorites.delete(song.id);
+        } else {
+          favorites.add(song.id);
+        }
+        saveFavorites();
+        updatePlayerUI();
+      }
+
+      // Toggle shuffle mode
+      function toggleShuffle() {
+        isShuffle = !isShuffle;
+        btnShuffle.classList.toggle("text-purple-500", isShuffle);
+      }
+
+      // Toggle repeat mode
+      function toggleRepeat() {
+        isRepeat = !isRepeat;
+        btnRepeat.classList.toggle("text-purple-500", isRepeat);
+      }
+
+      // Change volume
+      function changeVolume() {
+        audioPlayer.volume = volumeSlider.value;
+        updateVolumeIcon();
+      }
+
+      // Update volume icon based on volume level
+      function updateVolumeIcon() {
+        const vol = audioPlayer.volume;
+        const icon = btnVolumeIcon.querySelector("i");
+        if (vol === 0) {
+          icon.className = "fas fa-volume-mute fa-lg";
+        } else if (vol < 0.5) {
+          icon.className = "fas fa-volume-down fa-lg";
+        } else {
+          icon.className = "fas fa-volume-up fa-lg";
+        }
+      }
+
+      // Show modal to add new song
+      function showAddSongModal() {
+        modalOverlay.classList.remove("hidden");
+        formAddSong.reset();
+        document.getElementById("input-song-title").focus();
+      }
+
+      // Hide modal
+      function hideAddSongModal() {
+        modalOverlay.classList.add("hidden");
+      }
+
+      // Add new song from form
+      function addNewSong(e) {
+        e.preventDefault();
+        const title = document.getElementById("input-song-title").value.trim();
+        const artist = document.getElementById("input-song-artist").value.trim();
+        const audioUrl = document.getElementById("input-song-url").value.trim();
+        const coverUrl = document.getElementById("input-song-cover").value.trim();
+
+        if (!title || !artist || !audioUrl || !coverUrl) {
+          alert("Please fill in all fields.");
+          return;
+        }
+
+        // Validate URLs (basic)
+        try {
+          new URL(audioUrl);
+          new URL(coverUrl);
+        } catch {
+          alert("Please enter valid URLs for audio and cover image.");
+          return;
+        }
+
+        const newSong = {
+          id: crypto.randomUUID(),
+          title,
+          artist,
+          audioUrl,
+          coverUrl,
+        };
+        songs.push(newSong);
+        saveSongs();
+        renderSongList();
+        renderLibrarySongs();
+        hideAddSongModal();
+      }
+
+      // Switch main content section
+      function switchSection(section) {
+        // Update aria-pressed for nav buttons
+        [btnBrowse, btnLibrary, btnSettings].forEach((btn) =>
+          btn.setAttribute("aria-pressed", "false")
+        );
+        [mBtnBrowse, mBtnLibrary, mBtnSettings].forEach((btn) =>
+          btn.setAttribute("aria-pressed", "false")
+        );
+
+        switch (section) {
+          case "browse":
+            sectionBrowse.classList.remove("hidden");
+            sectionLibrary.classList.add("hidden");
+            sectionSettings.classList.add("hidden");
+            sidebarLibrary.classList.add("hidden");
+            btnBrowse.setAttribute("aria-pressed", "true");
+            mBtnBrowse.setAttribute("aria-pressed", "true");
+            break;
+          case "library":
+            sectionBrowse.classList.add("hidden");
+            sectionLibrary.classList.remove("hidden");
+            sectionSettings.classList.add("hidden");
+            sidebarLibrary.classList.remove("hidden");
+            btnLibrary.setAttribute("aria-pressed", "true");
+            mBtnLibrary.setAttribute("aria-pressed", "true");
+            break;
+          case "settings":
+            sectionBrowse.classList.add("hidden");
+            sectionLibrary.classList.add("hidden");
+            sectionSettings.classList.remove("hidden");
+            sidebarLibrary.classList.add("hidden");
+            btnSettings.setAttribute("aria-pressed", "true");
+            mBtnSettings.setAttribute("aria-pressed", "true");
+            break;
+        }
+      }
+
+      // Update app name from settings input
+      function updateAppNameFromInput() {
+        const val = inputAppName.value.trim();
+        if (val) {
+          appNameEl.textContent = val;
+          saveAppName(val);
+        }
+      }
+
+      // Update app logo from settings input
+      function updateAppLogoFromInput() {
+        const val = inputAppLogo.value.trim();
+        if (val) {
+          appLogoEl.src = val;
+          saveAppLogo(val);
+        }
+      }
+
+      // Initialize event listeners
+      function initEventListeners() {
+        // Mobile menu toggle
+        mobileMenuButton.addEventListener("click", () => {
+          mobileMenu.classList.toggle("hidden");
+        });
+
+        // Navigation buttons
+        btnBrowse.addEventListener("click", () => switchSection("browse"));
+        btnLibrary.addEventListener("click", () => switchSection("library"));
+        btnSettings.addEventListener("click", () => switchSection("settings"));
+
+        mBtnBrowse.addEventListener("click", () => {
+          switchSection("browse");
+          mobileMenu.classList.add("hidden");
+        });
+        mBtnLibrary.addEventListener("click", () => {
+          switchSection("library");
+          mobileMenu.classList.add("hidden");
+        });
+        mBtnSettings.addEventListener("click", () => {
+          switchSection("settings");
+          mobileMenu.classList.add("hidden");
+        });
+
+        // Add song button
+        btnAddSong.addEventListener("click", showAddSongModal);
+        btnCancelAddSong.addEventListener("click", hideAddSongModal);
+
+        // Add song form submit
+        formAddSong.addEventListener("submit", addNewSong);
+
+        // Audio player events
+        audioPlayer.addEventListener("timeupdate", updateProgress);
+        audioPlayer.addEventListener("ended", () => {
+          if (isRepeat) {
+            playSong(currentIndex);
+          } else {
+            playNext();
+          }
+        });
+
+        // Playback controls
+        btnPlayPause.addEventListener("click", togglePlayPause);
+        btnPrev.addEventListener("click", playPrev);
+        btnNext.addEventListener("click", playNext);
+
+        // Progress bar seek
+        progressBar.addEventListener("input", seekAudio);
+
+        // Favorite toggle
+        btnFavorite.addEventListener("click", toggleFavorite);
+
+        // Shuffle and repeat toggles
+        btnShuffle.addEventListener("click", toggleShuffle);
+        btnRepeat.addEventListener("click", toggleRepeat);
+
+        // Volume controls
+        volumeSlider.addEventListener("input", changeVolume);
+        btnVolumeIcon.addEventListener("click", () => {
+          if (audioPlayer.volume > 0) {
+            audioPlayer.volume = 0;
+            volumeSlider.value = 0;
+          } else {
+            audioPlayer.volume = 0.7;
+            volumeSlider.value = 0.7;
+          }
+          updateVolumeIcon();
+        });
+
+        // Settings form submit
+        settingsForm.addEventListener("submit", (e) => {
+          e.preventDefault();
+          updateAppNameFromInput();
+          updateAppLogoFromInput();
+          const color = inputPrimaryColor.value;
+          updatePrimaryColor(color);
+          savePrimaryColor(color);
+          alert("Settings saved!");
+        });
+
+        // Editable app name contenteditable sync
+        appNameEl.addEventListener("input", () => {
+          const val = appNameEl.textContent.trim();
+          if (val) {
+            inputAppName.value = val;
+            saveAppName(val);
+          }
+        });
+
+        // Keyboard accessibility for modal: close on Escape
+        window.addEventListener("keydown", (e) => {
+          if (e.key === "Escape" && !modalOverlay.classList.contains("hidden")) {
+            hideAddSongModal();
+          }
+        });
+      }
+
+      // Initialize volume and UI
+      function initPlayer() {
+        audioPlayer.volume = volumeSlider.value;
+        updateVolumeIcon();
+        updatePlayerUI();
+        updatePlayPauseButton();
+      }
+
+      // Initialize app
+      function init() {
+        loadState();
+        renderSongList();
+        renderLibrarySongs();
+        initEventListeners();
+        initPlayer();
+        switchSection("browse");
+      }
+
+      init();
+    })();
+  </script>
+ </body>
+</html>
